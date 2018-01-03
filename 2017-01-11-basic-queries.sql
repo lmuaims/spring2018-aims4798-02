@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS `course_catalog` (
-  `title` varchar(255) NOT NULL,
-  `subject` varchar(255) NOT NULL,
-  `course_number` int(4) NOT NULL,
-  `section` int(2) NOT NULL,
-  `instructor` varchar(255) NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `subject` VARCHAR(255) NOT NULL,
+  `course_number` INT(4) NOT NULL,
+  `section` INT(2) NOT NULL,
+  `instructor` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`subject`,`course_number`,`section`)
 );
 
