@@ -52,7 +52,7 @@ GROUP BY payment_month;
 -- FORMAT
 SELECT LEFT(payment_date, 7) AS payment_month,
   FORMAT(SUM(amount), 2) AS sum_amount,
-  COUNT(*) AS payment_count,
+  FORMAT(COUNT(*), 2) AS payment_count,
   REPEAT('+', COUNT(*) / 100) AS payment_count_trend
 FROM payment
 WHERE payment_date BETWEEN '2005-01-01' and '2005-12-31 23:59:59'
