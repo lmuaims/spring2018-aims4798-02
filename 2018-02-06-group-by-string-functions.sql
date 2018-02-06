@@ -131,6 +131,15 @@ FROM address
 WHERE address NOT LIKE '%way'
 LIMIT 10;
 
+-- Escaping
+SELECT 'Batting %' LIKE '%\%';
+
+SELECT 'Batting' LIKE '%\%';
+
+SELECT 'FIRST_LAST' LIKE '%\_%';
+
+SELECT 'FIRST LAST' LIKE '%\_%';
+
 -- REGEXP
 -- ^
 SELECT address
