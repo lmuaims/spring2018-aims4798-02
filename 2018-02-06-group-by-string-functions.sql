@@ -9,7 +9,7 @@ SELECT rating, COUNT(*)
 FROM film
 WHERE rental_duration > 3
 GROUP BY rating
-HAVING COUNT(*) >= 160;
+HAVING COUNT(*) >= 150;
 
 -- WITH ROLLUP
 SELECT rating, COUNT(*)
