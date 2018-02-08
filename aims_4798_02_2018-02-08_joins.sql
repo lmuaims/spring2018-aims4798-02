@@ -52,13 +52,14 @@ FROM film
 ORDER BY RAND()
 LIMIT 10;
 
-SELECT category.name, COUNT(*)
+SELECT category.name, COUNT(*) category_count
 FROM film
   JOIN film_category
   ON film.film_id = film_category.film_id
   JOIN category
   ON film_category.category_id = category.category_id
-GROUP BY category.name;
+GROUP BY category.name
+ORDER BY category_count DESC;
 
 SELECT category_id FROM film_category WHERE name = 'Drama';
 SELECT COUNT(*) FROM film_category WHERE category_id = 7;
@@ -195,7 +196,7 @@ FROM actor
 ORDER BY RAND()
 LIMIT 10;
 
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id, category.name
+SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film.title, category.name
 FROM actor
   JOIN film_actor
   ON actor.actor_id = film_actor.actor_id
@@ -205,6 +206,4 @@ FROM actor
   ON film_category.film_id = film.film_id
   JOIN category
   ON film_category.category_id = category.category_id
-WHERE category.name = 'Drama'
-ORDER BY RAND()
-LIMIT 10;
+WHERE category.name = 'Drama';
