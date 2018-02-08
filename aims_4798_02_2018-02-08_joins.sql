@@ -1,4 +1,8 @@
 -- JOIN
+SELECT * FROM city LIMIT 10;
+
+SELECT * FROM country LIMIT 10;
+
 SELECT city.city, country.country
 FROM city
   JOIN country
