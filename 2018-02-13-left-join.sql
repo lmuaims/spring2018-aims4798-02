@@ -1,261 +1,82 @@
--- JOIN
-SELECT * FROM city LIMIT 10;
-
-SELECT * FROM country LIMIT 10;
-
-SELECT city.city, country.country
-FROM city
-  JOIN country
-  ON city.country_id = country.country_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT c1.city, c2.country
-FROM city c1
-  JOIN country c2
-  ON c1.country_id = c2.country_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT c2.country, COUNT(*)
-FROM city c1
-  JOIN country c2
-  ON c1.country_id = c2.country_id
-GROUP BY c2.country
-HAVING COUNT(*) > 10
-ORDER BY COUNT(*) DESC;
-
-SHOW CREATE TABLE film;
-SHOW CREATE TABLE language;
-
-SELECT film.title, language.name
+-- #1
+-- List the actor_id associated to each film
+-- JOIN aka INNER JOIN
+-- Will only return films and its actors if the film_id is in the film_actor table
+SELECT film.film_id, film.title, film_actor.actor_id
 FROM film
-  JOIN language
-  ON film.language_id = language.language_id
-ORDER BY RAND()
-LIMIT 10;
+  JOIN film_actor
+  ON film.film_id = film_actor.film_id;
 
--- 3 Table JOIN
-SHOW CREATE TABLE film;
-SHOW CREATE TABLE film_category;
-SHOW CREATE TABLE category;
-
-SELECT film.film_id, film.title, film_category.film_id, film_category.category_id
+-- LEFT JOIN
+-- Will return all results, regardless if the film is not in the film_actor
+SELECT film.film_id, film.title, film_actor.film_id
 FROM film
-  JOIN film_category
-  ON film.film_id = film_category.film_id
-ORDER BY RAND()
-LIMIT 10;
+  LEFT JOIN film_actor
+  ON film.film_id = film_actor.film_id;
 
-SELECT film.film_id, film.title, film_category.film_id, film_category.category_id, category.name, category.category_id
+-- Which films do not have an actor? film_actor.film_id will return NULL if not in film_actor table.
+SELECT film.film_id, film.title, film_actor.film_id
 FROM film
-  JOIN film_category
-  ON film.film_id = film_category.film_id
-  JOIN category
-  ON film_category.category_id = category.category_id
-ORDER BY RAND()
-LIMIT 10;
+  LEFT JOIN film_actor
+  ON film.film_id = film_actor.film_id
+ORDER BY film_actor.film_id DESC;
 
-SELECT category.name, COUNT(*) category_count
+SELECT film.film_id, film.title, film_actor.film_id
 FROM film
-  JOIN film_category
-  ON film.film_id = film_category.film_id
-  JOIN category
-  ON film_category.category_id = category.category_id
-GROUP BY category.name
-ORDER BY category_count DESC;
-
-SELECT category_id FROM film_category WHERE name = 'Drama';
-SELECT COUNT(*) FROM film_category WHERE category_id = 7;
-SELECT COUNT(*) FROM film_category WHERE category_id = (SELECT category_id FROM category WHERE name = 'Drama');
-
--- 4 Table JOIN
-SHOW CREATE TABLE customer;
-SHOW CREATE TABLE address;
-SHOW CREATE TABLE city;
-SHOW CREATE TABLE country;
-
-SELECT customer_id, first_name, last_name, email, address_id
-FROM customer
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, customer.address_id
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, customer.address_id, address.city_id
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, customer.address_id, address.city_id, city.city
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-  JOIN city
-  ON address.city_id = city.city_id
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, customer.address_id, address.city_id, city.city, country.country
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-  JOIN city
-  ON address.city_id = city.city_id
-  JOIN country
-  ON city.country_id = country.country_id
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, customer.address_id, address.city_id, city.city, country.country
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-  JOIN city
-  ON address.city_id = city.city_id
-  JOIN country
-  ON city.country_id = country.country_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, customer.address_id, address.city_id, city.city, country.country
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-  JOIN city
-  ON address.city_id = city.city_id
-  JOIN country
-  ON city.country_id = country.country_id
-WHERE country.country = 'Canada'
-LIMIT 10;
-
-SELECT customer.customer_id, customer.first_name, customer.last_name, customer.email, city.city, country.country
-INTO OUTFILE '/var/lib/mysql-files/candadian_customers_2017020801.csv'
-FIELDS TERMINATED BY ','
-OPTIONALLY ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-FROM customer
-  JOIN address
-  ON customer.address_id = address.address_id
-  JOIN city
-  ON address.city_id = city.city_id
-  JOIN country
-  ON city.country_id = country.country_id
-WHERE country.country = 'Canada';
+  LEFT JOIN film_actor
+  ON film.film_id = film_actor.film_id
+WHERE film_actor.film_id IS NULL;
 
 
--- JOIN warmup and introduce GROUP_CONCAT
--- What is the most paid for a rental for each customer?
-SELECT c.email, c.first_name, c.last_name
-FROM customer c;
+-- #2
+-- List all films and their store_id. i.store_id will return NULL if not in inventory table.
+-- JOIN will return a result only if the film table's film_id foreign key is present in the inventory table
+SELECT f.film_id, f.title, i.store_id
+FROM film f
+  JOIN inventory i
+  ON f.film_id = i.film_id;
 
--- Find all customers in the payment table
-SELECT c.email, c.first_name, c.last_name, p.amount
-FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
+-- Adding a LEFT JOIN will return all rows from the left, the film table, even if film's film_id doesn't exist in the inventory table
+-- Add ORDER BY to easily see the NULL i.store_id at the bottom of the result
+SELECT f.film_id, f.title, i.store_id
+FROM film f
+  LEFT JOIN inventory i
+  ON f.film_id = i.film_id
+ORDER BY i.store_id DESC;
 
--- Find the payment amount for every rental
-SELECT c.customer_id, c.email, c.first_name, c.last_name, p.amount
-FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
-GROUP BY c.customer_id;
+-- Which films are not in inventory?
+SELECT f.film_id, f.title, i.store_id
+FROM film f
+  LEFT JOIN inventory i
+  ON f.film_id = i.film_id
+WHERE i.store_id IS NULL;
 
--- What is the leas and most paid for a rental for each customer and how many payments has the customer made based on film_id?
-SELECT c.email, c.first_name, c.last_name, MIN(p.amount), MAX(p.amount), COUNT(*) raw_payment_count
-FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
-GROUP BY c.customer_id;
-
--- List the payments associated to the customer in csv format
-SELECT c.email, c.first_name, c.last_name, MAX(p.amount), GROUP_CONCAT(p.amount)
-FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
-GROUP BY c.customer_id;
-
--- List the unique payments per customer
-SELECT c.email, c.first_name, c.last_name, MAX(p.amount), GROUP_CONCAT(DISTINCT p.amount)
-FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
-GROUP BY c.customer_id;
-
--- Sort the unique payments
-SELECT c.email, c.first_name, c.last_name, MAX(p.amount), GROUP_CONCAT(DISTINCT p.amount ORDER BY p.amount)
-FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
-GROUP BY c.customer_id;
+-- Which comedies are not in inventory?
+SELECT f.film_id, f.title, i.store_id, c.name
+FROM film f
+  LEFT JOIN inventory i
+  ON f.film_id = i.film_id
+  JOIN film_category fc
+  ON f.film_id = fc.film_id
+  JOIN category c
+  ON fc.category_id = c.category_id
+WHERE c.name = 'Comedy'
+  AND i.store_id IS NULL;
 
 
--- 5 Table JOIN
-SHOW CREATE TABLE actor;
-SHOW CREATE TABLE film_actor;
-SHOW CREATE TABLE film;
-SHOW CREATE TABLE film_category;
-SHOW CREATE TABLE category;
+-- #3
+-- Generate a list of films that have never been rented.
+-- Need to first find the film's inventory id to then join into the rental table
+SELECT f.title, i.inventory_id
+FROM film f
+  JOIN inventory i
+  ON f.film_id = i.film_id;
 
-SELECT first_name, last_name
-FROM actor
-LIMIT 10;
-
-SELECT CONCAT(first_name, ' ', last_name) actor_full_name
-FROM actor
-LIMIT 10;
-
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id
-FROM actor
-  JOIN film_actor
-  ON actor.actor_id = film_actor.actor_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title
-FROM actor
-  JOIN film_actor
-  ON actor.actor_id = film_actor.actor_id
-  JOIN film
-  ON film_actor.film_id = film.film_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id
-FROM actor
-  JOIN film_actor
-  ON actor.actor_id = film_actor.actor_id
-  JOIN film
-  ON film_actor.film_id = film.film_id
-  JOIN film_category
-  ON film_category.film_id = film.film_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id, category.name
-FROM actor
-  JOIN film_actor
-  ON actor.actor_id = film_actor.actor_id
-  JOIN film
-  ON film_actor.film_id = film.film_id
-  JOIN film_category
-  ON film_category.film_id = film.film_id
-  JOIN category
-  ON film_category.category_id = category.category_id
-ORDER BY RAND()
-LIMIT 10;
-
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film.title, category.name
-FROM actor
-  JOIN film_actor
-  ON actor.actor_id = film_actor.actor_id
-  JOIN film
-  ON film_actor.film_id = film.film_id
-  JOIN film_category
-  ON film_category.film_id = film.film_id
-  JOIN category
-  ON film_category.category_id = category.category_id
-WHERE category.name = 'Drama';
+-- LEFT JOIN into rental table to find missing inventory_ids
+SELECT f.title, i.inventory_id, r.inventory_id
+FROM film f
+  JOIN inventory i
+  ON f.film_id = i.film_id
+  LEFT JOIN rental r
+  ON i.inventory_id = r.inventory_id
+WHERE r.inventory_id IS NULL;
