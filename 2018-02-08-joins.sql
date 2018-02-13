@@ -145,6 +145,50 @@ FROM customer
   ON city.country_id = country.country_id
 WHERE country.country = 'Canada';
 
+
+-- JOIN warmup and introduce GROUP_CONCAT
+-- What is the minimum and maximum rental payment amount for each customer?
+SHOW CREATE TABLE customer;
+SHOW CREATE TABLE payment;
+
+SELECT c.email, c.first_name, c.last_name
+FROM customer c;
+
+-- Find all customers in the payment table
+SELECT c.email, c.first_name, c.last_name, p.amount
+FROM customer c
+  JOIN payment p
+  ON c.customer_id = p.customer_id
+
+-- Find the payment amount for every rental
+SELECT c.customer_id, c.email, c.first_name, c.last_name, p.amount
+FROM customer c
+  JOIN payment p
+  ON c.customer_id = p.customer_id
+GROUP BY c.customer_id;
+
+-- What is the minimum and maximum rental payment amount for each customer and how many payments has the customer made?
+SELECT c.email, c.first_name, c.last_name, MIN(p.amount), MAX(p.amount), COUNT(*) raw_payment_count
+FROM customer c
+  JOIN payment p
+  ON c.customer_id = p.customer_id
+GROUP BY c.customer_id;
+
+-- List the payments associated to the customer in csv format
+SELECT c.email, c.first_name, c.last_name, MAX(p.amount), GROUP_CONCAT(p.amount)
+FROM customer c
+  JOIN payment p
+  ON c.customer_id = p.customer_id
+GROUP BY c.customer_id;
+
+-- List the unique, sorted payments per customer
+SELECT c.email, c.first_name, c.last_name, MIN(p.amount), MAX(p.amount), GROUP_CONCAT(DISTINCT p.amount ORDER BY p.amount SEPARATOR ', ')
+FROM customer c
+  JOIN payment p
+  ON c.customer_id = p.customer_id
+GROUP BY c.customer_id;
+
+
 -- 5 Table JOIN
 SHOW CREATE TABLE actor;
 SHOW CREATE TABLE film_actor;
