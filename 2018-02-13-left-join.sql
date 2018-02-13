@@ -1,4 +1,5 @@
 -- #1
+-- Which films do not have an actor?
 -- List the actor_id associated to each film
 -- JOIN aka INNER JOIN
 -- Will only return films and its actors if the film_id is in the film_actor table
@@ -29,7 +30,7 @@ WHERE film_actor.film_id IS NULL;
 
 
 -- #2
--- List all films and their store_id. i.store_id will return NULL if not in inventory table.
+-- Which comedies are not in inventory?
 -- JOIN will return a result only if the film table's film_id foreign key is present in the inventory table
 SELECT f.film_id, f.title, i.store_id
 FROM film f
@@ -37,6 +38,7 @@ FROM film f
   ON f.film_id = i.film_id;
 
 -- Adding a LEFT JOIN will return all rows from the left, the film table, even if film's film_id doesn't exist in the inventory table
+-- List all films and their store_id. i.store_id will return NULL if not in inventory table.
 -- Add ORDER BY to easily see the NULL i.store_id at the bottom of the result
 SELECT f.film_id, f.title, i.store_id
 FROM film f
@@ -52,6 +54,16 @@ FROM film f
 WHERE i.store_id IS NULL;
 
 -- Which comedies are not in inventory?
+-- Get category_id from film_category
+SELECT f.film_id, f.title, i.store_id
+FROM film f
+  LEFT JOIN inventory i
+  ON f.film_id = i.film_id
+  JOIN film_category fc
+  ON f.film_id = fc.film_id
+  WHERE i.store_id IS NULL;
+
+-- Get category name from category
 SELECT f.film_id, f.title, i.store_id, c.name
 FROM film f
   LEFT JOIN inventory i
