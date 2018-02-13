@@ -151,21 +151,17 @@ WHERE country.country = 'Canada';
 SHOW CREATE TABLE customer;
 SHOW CREATE TABLE payment;
 
-SELECT c.email, c.first_name, c.last_name
-FROM customer c;
-
--- Find all customers in the payment table
-SELECT c.email, c.first_name, c.last_name, p.amount
+SELECT c.customer_id, c.email, c.first_name, c.last_name
 FROM customer c
-  JOIN payment p
-  ON c.customer_id = p.customer_id
+LIMIT 10;
 
--- Find the payment amount for every rental
+-- Find all customers and the rental payment amount in the payment table
 SELECT c.customer_id, c.email, c.first_name, c.last_name, p.amount
 FROM customer c
   JOIN payment p
   ON c.customer_id = p.customer_id
-GROUP BY c.customer_id;
+ORDER BY RAND()
+LIMIT 10;
 
 -- What is the minimum and maximum rental payment amount for each customer and how many payments has the customer made?
 SELECT c.email, c.first_name, c.last_name, MIN(p.amount), MAX(p.amount), COUNT(*) raw_payment_count
@@ -196,22 +192,26 @@ SHOW CREATE TABLE film;
 SHOW CREATE TABLE film_category;
 SHOW CREATE TABLE category;
 
-SELECT first_name, last_name
+# sample actor table
+SELECT actor_id, first_name, last_name
 FROM actor
 LIMIT 10;
 
-SELECT CONCAT(first_name, ' ', last_name) actor_full_name
+# generate full name
+SELECT actor_id, CONCAT(first_name, ' ', last_name) actor_full_name
 FROM actor
 LIMIT 10;
 
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id
+# join into film_actor to find actors associated to a film
+SELECT actor.actor_id, CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id
 FROM actor
   JOIN film_actor
   ON actor.actor_id = film_actor.actor_id
 ORDER BY RAND()
 LIMIT 10;
 
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title
+# join into film to select title
+SELECT actor.actor_id, CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title
 FROM actor
   JOIN film_actor
   ON actor.actor_id = film_actor.actor_id
@@ -220,7 +220,8 @@ FROM actor
 ORDER BY RAND()
 LIMIT 10;
 
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id
+# join into film_category to get category associated to film
+SELECT actor.actor_id, CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id
 FROM actor
   JOIN film_actor
   ON actor.actor_id = film_actor.actor_id
@@ -231,7 +232,8 @@ FROM actor
 ORDER BY RAND()
 LIMIT 10;
 
-SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id, category.name
+# join into category to translate category_id into a name
+SELECT actor.actor_id, CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film_actor.film_id, film.title, film_category.category_id, category.name
 FROM actor
   JOIN film_actor
   ON actor.actor_id = film_actor.actor_id
@@ -244,6 +246,7 @@ FROM actor
 ORDER BY RAND()
 LIMIT 10;
 
+# add where to film for Dramas and clean up columns selected
 SELECT CONCAT(actor.first_name, ' ', actor.last_name) actor_full_name, film.title, category.name
 FROM actor
   JOIN film_actor
