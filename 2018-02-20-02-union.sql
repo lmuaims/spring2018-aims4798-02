@@ -22,7 +22,7 @@ CREATE TABLE transaction_2014 (
     (order_id, email, @var1, first_name, last_name, address, city, state, zip, @var2, @order_date, total)
 	SET order_date = STR_TO_DATE(@order_date, "%m/%d/%Y");
 
-CREATE TABLE transaction2015 LIKE transaction2014;
+CREATE TABLE transaction_2015 LIKE transaction_2014;
 
 LOAD DATA INFILE '/var/lib/mysql-files/transactions_2015.csv' INTO TABLE transaction_2015
     FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES
@@ -30,7 +30,7 @@ LOAD DATA INFILE '/var/lib/mysql-files/transactions_2015.csv' INTO TABLE transac
 	SET order_date = STR_TO_DATE(@order_date, "%m/%d/%Y");
 
 CREATE TABLE customer (
-  email VARCHAR(255) NOT NULL UNIQUE,
+	email VARCHAR(255) NOT NULL UNIQUE,
 	last_name VARCHAR(255),
 	first_name VARCHAR(255),
 	address VARCHAR(255),
