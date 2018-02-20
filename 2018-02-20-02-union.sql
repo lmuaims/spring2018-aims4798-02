@@ -1,6 +1,6 @@
 # cd /var/lib/mysql-files
-# wget https://goo.gl/qeNBsB
-# wget https://goo.gl/kfi6cr
+# wget https://goo.gl/qeNBsB -O transactions_2014.csv
+# wget https://goo.gl/kfi6cr -O transactions_2015.csv
 
 USE classwork;
 
@@ -17,14 +17,14 @@ CREATE TABLE transaction_2014 (
   total FLOAT(15,2) DEFAULT NULL);
 
 
- LOAD DATA INFILE '/var/lib/mysql-files/transactions2014.csv' INTO TABLE transaction_2014
+ LOAD DATA INFILE '/var/lib/mysql-files/transactions_2014.csv' INTO TABLE transaction_2014
     FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\'' LINES TERMINATED BY '\r\n' IGNORE 1 LINES
     (order_id, email, @var1, first_name, last_name, address, city, state, zip, @var2, @order_date, total)
 	SET order_date = STR_TO_DATE(@order_date, "%m/%d/%Y");
 
 CREATE TABLE transaction2015 LIKE transaction2014;
 
-LOAD DATA INFILE '/var/lib/mysql-files/transactions2015.csv' INTO TABLE transaction_2015
+LOAD DATA INFILE '/var/lib/mysql-files/transactions_2015.csv' INTO TABLE transaction_2015
     FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES
     (order_id, email, @var1, first_name, last_name, address, city, state, zip, @var2, @order_date, total)
 	SET order_date = STR_TO_DATE(@order_date, "%m/%d/%Y");
