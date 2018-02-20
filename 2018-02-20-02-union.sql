@@ -2,6 +2,8 @@
 # wget https://goo.gl/qeNBsB
 # wget https://goo.gl/kfi6cr
 
+USE classwork;
+
 CREATE TABLE transaction_2014 (
   order_id INT(15) DEFAULT NULL,
   email VARCHAR(50) DEFAULT NULL,
