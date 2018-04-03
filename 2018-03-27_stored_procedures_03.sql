@@ -200,6 +200,10 @@ SELECT * FROM film_select_log;
 -- LOOP - LEAVE - END LOOP
 -- CURSOR
 -- DECLARE ... HANDLER to fix fatal error
+
+SHOW CREATE PROCEDURE film_select_loop_leave_end_loop_example\G
+
+
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS film_select_loop_leave_end_loop_example$$
